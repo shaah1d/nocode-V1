@@ -65,7 +65,7 @@ async def preprocess_endpoint(
     missing_strategy: str = Form(...),
     scaling: bool = Form(...),
     encoding: str = Form(...),
-    target_column: str = Form(None)  # Optional target column
+    target_column: str = Form(None)  
 ):
     try:
         results = {}
@@ -88,6 +88,7 @@ async def preprocess_endpoint(
         print(f"Error in /preprocess endpoint: {str(e)}")
         return JSONResponse(content={"error": f"Preprocessing failed: {str(e)}"}, status_code=500)
 
+
 @app.post("/train")
 async def train_model_endpoint(
     preprocessed_filenames: list[str] = Form(...),
@@ -98,16 +99,16 @@ async def train_model_endpoint(
     try:
         results = {}
         for filename in preprocessed_filenames:
-            file_location =     filename # e.g., uploads/preprocessed_data.csv
+            file_location =     filename 
             if not os.path.exists(file_location):
                 return JSONResponse(content={"error": f"Preprocessed file {filename} not found"}, status_code=404)
             df_processed = pd.read_csv(file_location)
             result = train_model(df_processed, target_column, task_type, model_type)
             if "model" in result:
-                # Extract the original filename by removing 'preprocessed_' prefix from basename
-                basename = os.path.basename(filename)  # e.g., preprocessed_data.csv
-                original_filename = basename.replace("preprocessed_", "", 1)  # e.g., data.csv
-                model_filename = f"trained_model_{original_filename.split('.')[0]}.pkl"  # e.g., trained_model_data.pkl
+              
+                basename = os.path.basename(filename)  
+                original_filename = basename.replace("preprocessed_", "", 1)  
+                model_filename = f"trained_model_{original_filename.split('.')[0]}.pkl"  
                 save_model(result["model"], file_path=f"uploads/{model_filename}")
                 del result["model"]
             results[filename] = result

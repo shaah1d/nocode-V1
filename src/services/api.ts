@@ -37,6 +37,7 @@ const uploadFiles = async (
     const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    console.log(response.data);
     onProgress(100);
     return response.data;
   } catch (error) {
@@ -72,17 +73,16 @@ const preprocessData = async (
   try {
     const response = await axios.post(`${API_BASE_URL}/preprocess`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
-      timeout: 30000,
+      timeout: 60000,
     });
     onProgress(100);
     return response.data;
   } catch (error) {
     handleError(error);
-    return {}; // Add this to prevent TypeScript error
+    return {}; 
   }
 };
 
-// Optimized train function
 const trainModel = async (
   files: File[],
   targetColumn: string,
